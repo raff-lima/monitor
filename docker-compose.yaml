@@ -23,7 +23,7 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.netdata.rule=Host(`netdata.seudominio.com`)"
+      - "traefik.http.routers.netdata.rule=Host(`view.rydev.me`)"
       - "traefik.http.services.netdata.loadbalancer.server.port=19999"
       - "traefik.http.routers.netdata.entrypoints=websecure"
       - "traefik.http.routers.netdata.tls.certresolver=myresolver"  # SSL automático
