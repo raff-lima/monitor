@@ -27,7 +27,6 @@ services:
       - "traefik.http.services.netdata.loadbalancer.server.port=19999"
       - "traefik.http.routers.netdata.entrypoints=websecure"
       - "traefik.http.routers.netdata.tls.certresolver=myresolver"  # SSL automático
-      - "traefik.http.middlewares.auth.basicauth.users=user:senha_criptografada"  # Autenticação básica (opcional)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:19999"]
       interval: 30s
