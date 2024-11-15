@@ -5,22 +5,29 @@ services:
     image: netdata/netdata:v1.47.4
     container_name: netdata
     ports:
-      - "19999:19999"  # Expose Netdata UI on port 19999
+      - "19999:19999"
     restart: unless-stopped
     cap_add:
-      - SYS_PTRACE  # Required for monitoring
+      - SYS_PTRACE
     security_opt:
-      - apparmor=unconfined  # Allow more permissions for Netdata monitoring
+      - apparmor=unconfined
     volumes:
-      - ./netdata/config:/etc/netdata  # Custom configuration files from your repo
-      - netdata_lib:/var/lib/netdata  # Persistent storage for historical data
-      - netdata_cache:/var/cache/netdata  # Cache directory for faster performance
-      - /proc:/host/proc:ro  # System metrics
+      - ./netdata/config:/etc/netdata
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+      - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
-      - /var/run/docker.sock:/var/run/docker.sock  # Docker socket for container metrics
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock  # Set Docker socket for container names
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.netdata.rule=Host(`netdata.seudominio.com`)"
+      - "traefik.http.services.netdata.loadbalancer.server.port=19999"
+      - "traefik.http.routers.netdata.entrypoints=websecure"
+      - "traefik.http.routers.netdata.tls.certresolver=myresolver"  # SSL automático
+      - "traefik.http.middlewares.auth.basicauth.users=user:senha_criptografada"  # Autenticação básica (opcional)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:19999"]
       interval: 30s
